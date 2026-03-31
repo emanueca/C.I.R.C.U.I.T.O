@@ -1,8 +1,6 @@
 <?php
-//SERVIDOR LOCAL TIPO XAMP E NOSSOS AMIGOS
+//ALWEYSDATA CONEXÃO
 declare(strict_types=1);
-
-require_once __DIR__ . '/database_always.php';
 
 if (!function_exists('env')) {
 	function env(string $key, ?string $default = null): ?string
@@ -52,26 +50,26 @@ if (!function_exists('loadEnv')) {
 	}
 }
 
-if (!function_exists('dbXampp')) {
-	function dbXampp(): PDO
+if (!function_exists('dbAlwaysData')) {
+	function dbAlwaysData(): PDO
 	{
-		static $pdoXampp = null;
+		static $pdoAlways = null;
 
-		if ($pdoXampp instanceof PDO) {
-			return $pdoXampp;
+		if ($pdoAlways instanceof PDO) {
+			return $pdoAlways;
 		}
 
 		loadEnv(dirname(__DIR__, 2) . '/.env');
 
-		$host = env('DB_HOST', '127.0.0.1');
-		$port = env('DB_PORT', '3306');
-		$database = env('DB_DATABASE', 'circuito');
-		$username = env('DB_USERNAME', 'root');
-		$password = env('DB_PASSWORD', '');
+		$host = env('ALWAYSDATA_DB_HOST', env('DB_HOST', 'ftp-circuito.alwaysdata.net'));
+		$port = env('ALWAYSDATA_DB_PORT', env('DB_PORT', '3306'));
+		$database = env('ALWAYSDATA_DB_DATABASE', env('DB_DATABASE', 'circuito-circuito'));
+		$username = env('ALWAYSDATA_DB_USERNAME', env('DB_USERNAME', 'circuito'));
+		$password = env('ALWAYSDATA_DB_PASSWORD', env('DB_PASSWORD', 'bishbashboshmapadaminhaescola'));
 
 		$dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
 
-		$pdoXampp = new PDO(
+		$pdoAlways = new PDO(
 			$dsn,
 			$username,
 			$password,
@@ -82,21 +80,6 @@ if (!function_exists('dbXampp')) {
 			]
 		);
 
-		return $pdoXampp;
-	}
-}
-
-if (!function_exists('db')) {
-	function db(): PDO
-	{
-		loadEnv(dirname(__DIR__, 2) . '/.env');
-
-		$profile = strtolower((string) env('DB_PROFILE', 'xampp'));
-
-		if ($profile === 'alwaysdata') {
-			return dbAlwaysData();
-		}
-
-		return dbXampp();
+		return $pdoAlways;
 	}
 }
